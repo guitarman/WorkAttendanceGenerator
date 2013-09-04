@@ -1,4 +1,4 @@
-workattendance
+Work attendance generator
 ==============
 
-WorkAttendanceGenerator
+Work attendance generator
