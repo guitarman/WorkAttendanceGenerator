@@ -64,12 +64,12 @@ opt_parser.parse!
 
 days = days_in_month(Time.now.month)
 
-CSV.open(output_file, "w") do |csv|
+CSV.open(output_file, "w:utf-8") do |csv|
   for i in 1..days do
     date = DateTime.new(year, month, i)
     case date.wday
       when 6,0
-        attendance = "Vikend"
+        attendance = "Víkend"
       else
         attendance = options.key?(i.to_s) ? options[i.to_s] : "P"
     end
