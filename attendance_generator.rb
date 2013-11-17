@@ -1,7 +1,20 @@
+# encoding: UTF-8
 require "optparse"
+require "date"
+require "csv"
 
 options = {}
 output_file = Time.now.month.to_s + ".csv"
+year = Time.now.year
+month = Time.now.month
+
+#inspired by rails implementation
+COMMON_YEAR_DAYS_IN_MONTH = [nil, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+def days_in_month(month)
+  return 29 if month == 2 && Date.gregorian_leap?(year)
+  COMMON_YEAR_DAYS_IN_MONTH[month]
+end
 
 def add_to_options(options, params, value)
   params.each { |param| options[param.to_s] = value }
@@ -49,5 +62,17 @@ end
 
 opt_parser.parse!
 
-puts options
-puts output_file
+days = days_in_month(Time.now.month)
+
+CSV.open(output_file, "wb") do |csv|
+  for i in 1..days do
+    date = DateTime.new(year, month, i)
+    case date.wday
+      when 6,0
+        attendance = "Vikend"
+      else
+        attendance = options.key?(i.to_s) ? options[i.to_s] : "P"
+    end
+    csv << [date.strftime("%d.%m.%Y"), attendance]
+  end
+end
