@@ -4,7 +4,7 @@ require "date"
 require "csv"
 
 options = {}
-output_file = Time.now.month.to_s + ".csv"
+output_file = "output.csv"
 year = Time.now.year
 month = Time.now.month
 
@@ -50,11 +50,17 @@ opt_parser = OptionParser.new do |opt|
     add_to_options(options, absence, "A")
   end
 
+  opt.on("-m","--month MONTH", Integer, "Month which attendance should be generated for") do |month_num|
+    puts month_num.class
+    month = month_num if month_num.between?(1,12)
+    puts month
+  end
+
   opt.on("-e","--excel FILENAME", "Excel output file name") do |file|
     output_file = file + ".xlsx"
   end
 
-  opt.on("-h","--help","help") do
+  opt.on("-h","--help","Help") do
     puts opt_parser
   end
 
@@ -62,7 +68,7 @@ end
 
 opt_parser.parse!
 
-days = days_in_month(Time.now.month)
+days = days_in_month(month)
 
 CSV.open(output_file, "w:utf-8") do |csv|
   for i in 1..days do
