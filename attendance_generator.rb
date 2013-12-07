@@ -79,6 +79,6 @@ CSV.open(output_file, "w:utf-8") do |csv|
       else
         attendance = options.key?(i.to_s) ? options[i.to_s] : "P"
     end
-    csv << [date.strftime("%d.%m.%Y"), attendance]
+    csv << [date.strftime("%d/%m/%Y"), attendance]
   end
 end
