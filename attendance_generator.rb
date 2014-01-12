@@ -56,6 +56,11 @@ opt_parser = OptionParser.new do |opt|
     puts month
   end
 
+  opt.on("-o","--output FILE", "Output file name") do |file_name|
+    file_name += '.csv' unless file_name =~ /\.csv/
+    output_file = file_name
+  end
+
   opt.on("-e","--excel FILENAME", "Generating output to specified excel (without extension) file ") do |file|
     output_file = file + ".xlsx"
   end
