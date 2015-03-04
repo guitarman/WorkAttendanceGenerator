@@ -51,9 +51,7 @@ opt_parser = OptionParser.new do |opt|
   end
 
   opt.on("-m","--month MONTH", Integer, "Month which attendance should be generated for") do |month_num|
-    puts month_num.class
     month = month_num if month_num.between?(1,12)
-    puts month
   end
 
   opt.on("-o","--output FILE", "Output file name") do |file_name|
