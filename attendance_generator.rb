@@ -4,7 +4,7 @@ require "date"
 require "csv"
 require "holidays"
 
-options = {}
+@options = {}
 output_file = "output.csv"
 year = Time.now.year
 month = Time.now.month
@@ -17,44 +17,44 @@ def days_in_month(year, month)
   COMMON_YEAR_DAYS_IN_MONTH[month]
 end
 
-def add_to_options(options, params, value)
-  params.each { |param| options[param.to_i.to_s] = value }
+def add_to_options(params, value)
+  params.each { |param| @options[param.to_i.to_s] = value }
 end
 
-def holidays_for_month(options, year, month)
+def holidays_for_month(year, month)
   holidays = Holidays.between(Date.new(year, month, 1), Date.new(year, month, -1), :sk)
   h_day_numbers = holidays.map{ |holiday| holiday[:date].strftime('%d')}
-  add_to_options(options, h_day_numbers, 'SV')
+  add_to_options(h_day_numbers, 'SV')
 end
 
 opt_parser = OptionParser.new do |opt|
 
   opt.on("-p","--public PUBLIC_HOLIDAYS", Array, "Specify public holidays") do |public_holidays|
-    add_to_options(options, public_holidays, "SV")
+    add_to_options(public_holidays, "SV")
   end
 
   opt.on("-l","--leave LEAVE", Array, "Specify days of leave") do |leave|
-    add_to_options(options, leave, "D")
+    add_to_options(leave, "D")
   end
 
   opt.on("-i","--illness ILLNESS", Array, "Specify days of illness") do |illness|
-    add_to_options(options, illness, "CH")
+    add_to_options(illness, "CH")
   end
 
   opt.on("-c","--compensatory COMPENSATORY", Array, "Specify days of compensatory leave") do |compensatory_leave|
-    add_to_options(options, compensatory_leave, "NV")
+    add_to_options(compensatory_leave, "NV")
   end
 
   opt.on("-u","--unpaid UNPAID", Array, "Specify days of unpaid leave") do |unpaid_leave|
-    add_to_options(options, unpaid_leave, "V")
+    add_to_options(unpaid_leave, "V")
   end
 
   opt.on("-b","--business BUSINESS", Array, "Specify days of business leave") do |business|
-    add_to_options(options, business, "SC")
+    add_to_options(business, "SC")
   end
 
   opt.on("-a","--absence ABSENCE", Array, "Specify days of absence") do |absence|
-    add_to_options(options, absence, "A")
+    add_to_options(absence, "A")
   end
 
   opt.on("-m","--month MONTH", Integer, "Month which attendance should be generated for") do |month_num|
@@ -81,14 +81,14 @@ opt_parser.parse!
 days = days_in_month(year, month)
 
 CSV.open(output_file, "w:utf-8") do |csv|
-  holidays_for_month(options, year, month)
+  holidays_for_month(year, month)
   for i in 1..days do
     date = Date.new(year, month, i)
     case date.wday
       when 6,0
         attendance = "Víkend"
       else
-        attendance = options.key?(i.to_s) ? options[i.to_s] : "P"
+        attendance = @options.key?(i.to_s) ? @options[i.to_s] : "P"
     end
     csv << [date.strftime("%d/%m/%Y"), attendance]
   end
