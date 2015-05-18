@@ -18,7 +18,7 @@ def days_in_month(year, month)
 end
 
 def add_to_options(options, params, value)
-  params.each { |param| options[param.to_s] = value }
+  params.each { |param| options[param.to_i.to_s] = value }
 end
 
 def holidays_for_month(options, year, month)
