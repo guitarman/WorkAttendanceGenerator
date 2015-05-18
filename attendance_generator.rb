@@ -2,6 +2,7 @@
 require "optparse"
 require "date"
 require "csv"
+require "holidays"
 
 options = {}
 output_file = "output.csv"
@@ -18,6 +19,12 @@ end
 
 def add_to_options(options, params, value)
   params.each { |param| options[param.to_s] = value }
+end
+
+def holidays_for_month(options, year, month)
+  holidays = Holidays.between(Date.new(year, month, 1), Date.new(year, month, -1), :sk)
+  h_day_numbers = holidays.map{ |holiday| holiday[:date].strftime('%d')}
+  add_to_options(options, h_day_numbers, 'SV')
 end
 
 opt_parser = OptionParser.new do |opt|
@@ -74,8 +81,9 @@ opt_parser.parse!
 days = days_in_month(year, month)
 
 CSV.open(output_file, "w:utf-8") do |csv|
+  holidays_for_month(options, year, month)
   for i in 1..days do
-    date = DateTime.new(year, month, i)
+    date = Date.new(year, month, i)
     case date.wday
       when 6,0
         attendance = "Víkend"
